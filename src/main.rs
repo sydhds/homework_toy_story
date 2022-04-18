@@ -33,12 +33,6 @@ where
 
     let csv_reader = CsvReader::new(csv_path_)?;
 
-    /*
-    for transaction in csv_reader {
-        println!("transaction: {:?}", transaction);
-    }
-    */
-
     let mut accounts = Accounts::new();
 
     for transaction_ in csv_reader {

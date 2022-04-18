@@ -68,19 +68,6 @@ impl CsvReader {
             .has_headers(true)
             .from_path(csv_path)?;
 
-        // println!("rdr: {:?}", rdr);
-
-        /*
-        for result in rdr.deserialize() {
-            // Notice that we need to provide a type hint for automatic
-            // deserialization.
-
-            let tr: Transaction = result.unwrap();
-            println!("tr: {:?}", tr);
-            // ops.push(op);
-        }
-        */
-
         Ok(CsvReader {
             // csv_path,
             rdr,
@@ -97,25 +84,6 @@ impl Iterator for CsvReader {
         }
 
         None
-        /*
-        Some(Transaction {
-            kind: TransactionKind::deposit,
-            client: 0,
-            tx: 0,
-            amount: None,
-            under_dispute: false
-        })
-        */
-
-        /*
-        loop {
-            let i = self.curr;
-            self.curr += 1;
-            if i % 2 == 0 {
-                return Some(i);
-            }
-        }
-        */
     }
 }
 

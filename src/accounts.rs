@@ -30,19 +30,19 @@ impl Account {
 /// An error retrieved via [Accounts::handle_transaction]
 #[derive(Debug, Clone)]
 pub enum TransactionError {
-    // Client is unknown (this should never happen)
+    /// Client is unknown (this should never happen)
     UnknownClient(u16),
-    // Transaction is unknown (e.g. a Dispute with an unknown tx)
+    /// Transaction is unknown (e.g. a Dispute with an unknown tx)
     UnknownTransaction(u32),
-    // Invalid amount (e.g. a deposit with infinite amount)
+    /// Invalid amount (e.g. a deposit with infinite amount)
     InvalidAmount(f64),
-    // Account has reached the f64 limits (should never happen?)
+    /// Account has reached the f64 limits (should never happen?)
     AccountAmountTooLarge,
-    // Reject a resolve / chargeback transaction because it is not disputed
+    /// Reject a resolve / chargeback transaction because it is not disputed
     TxNonDisputed(u32),
-    // Account is locked thus cannot deposit nor withdraw
+    /// Account is locked thus cannot deposit nor withdraw
     AccountLocked(u16),
-    // Invalid transaction (e.g. non unique tx?)
+    /// Invalid transaction (e.g. non unique tx?)
     InvalidTransaction(u32),
 }
 
@@ -92,17 +92,10 @@ impl Accounts {
 
     #[doc(hidden)]
     fn add_client(&mut self, client_id: u16) {
-        /*
-        if !self.inner.contains_key(&client_id) {
-            self.inner.insert(client_id, Account::new());
-        }
-        */
 
         self.inner
             .entry(client_id)
             .or_insert_with(|| Account::new());
-
-        // false
     }
 
     #[doc(hidden)]
@@ -126,40 +119,6 @@ impl Accounts {
     fn get_transaction_mut(&mut self, tx: u32) -> Option<&mut Transaction> {
         self.tx.get_mut(&tx)
     }
-
-    /*
-    pub fn output_as_csv(&self) -> Result<(), csv::Error>
-    {
-
-        let mut wtr = csv::Writer::from_writer(io::stdout());
-        /*
-        let mut wtr = match into {
-            Some(w) => csv::Writer::from_writer(w),
-            None => csv::Writer::from_writer(io::stdout()),
-        };
-        */
-        /*
-        let res: Vec<Result<(), _>> = self.inner
-            .iter()
-            .map(|(client, a)| {
-                wtr.serialize( AccountLine::from_account(*client, a))
-            })
-            .collect();
-        */
-
-        let res: Result<Vec<()>, csv::Error> = self.inner
-            .iter()
-            .map(|(client, a)| {
-                wtr.serialize(AccountLine::from_account(*client, a))
-            })
-            .collect();
-
-        res?;
-        // wtr.serialize(accounts)?;
-        wtr.flush()?;
-        Ok(())
-    }
-    */
 
     /// Generate csv for all accounts (header: client, available, held, total, locked)
     pub fn output_as_csv<W>(&self, into: Option<&mut W>) -> Result<(), csv::Error>
@@ -189,20 +148,6 @@ impl Accounts {
         }
 
         let mut wtr = csv::Writer::from_writer(into.unwrap());
-        /*
-        let mut wtr = match into {
-            Some(w) => csv::Writer::from_writer(w),
-            None => csv::Writer::from_writer(io::stdout()),
-        };
-        */
-        /*
-        let res: Vec<Result<(), _>> = self.inner
-            .iter()
-            .map(|(client, a)| {
-                wtr.serialize( AccountLine::from_account(*client, a))
-            })
-            .collect();
-        */
 
         let res: Result<Vec<()>, csv::Error> = self
             .inner
@@ -217,36 +162,10 @@ impl Accounts {
 
     /// Handle a transaction, returning a [TransactionError] if it fails
     pub fn handle_transaction(&mut self, transaction: Transaction) -> Result<(), TransactionError> {
-        /*
-        if !self.inner.contains_key(&transaction.client) {
-            self.inner.insert(transaction.client, Account::new());
-        }
-        */
 
         self.inner
             .entry(transaction.client)
             .or_insert_with(|| Account::new());
-
-        /*
-        let account = self.inner
-            .get_mut(&transaction.client)
-            .ok_or(
-                TransactionError::UnknownClient(transaction.client)
-            )?;
-        */
-
-        /*
-        let amount = match transaction.amount {
-            Some(a) => {
-                if a > 0.0 {
-                    a
-                } else {
-                    return Err(TransactionError::InvalidAmount(a));
-                }
-            },
-            None => 0.0,
-        };
-        */
 
         let amount = get_amount(&transaction)?;
 
